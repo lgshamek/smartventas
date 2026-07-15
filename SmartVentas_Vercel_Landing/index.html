@@ -1,0 +1,2203 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#020f27">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="SmartVentas es una plataforma inteligente para ventas, inventario, caja, reportes, comprobantes, contabilidad y el asistente SAVI.">
+  <title>SmartVentas | Ventas inteligentes con SAVI</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020f27;
+      --bg-2: #061b3b;
+      --surface: rgba(8, 30, 64, .76);
+      --surface-strong: rgba(5, 22, 50, .92);
+      --line: rgba(105, 218, 255, .24);
+      --line-strong: rgba(17, 228, 207, .52);
+      --text: #f4fbff;
+      --muted: #a8bfd4;
+      --navy: #071a3b;
+      --blue: #156dff;
+      --cyan: #24d8ff;
+      --teal: #11c9bb;
+      --green: #73e34f;
+      --amber: #ffbd45;
+      --red: #ff5267;
+      --white: #ffffff;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .38);
+      --soft-shadow: 0 16px 38px rgba(0, 12, 32, .28);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --max: 1180px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #eef9fb;
+      --bg-2: #dff6f9;
+      --surface: rgba(255, 255, 255, .78);
+      --surface-strong: rgba(255, 255, 255, .94);
+      --line: rgba(10, 84, 135, .18);
+      --line-strong: rgba(9, 178, 165, .45);
+      --text: #061b3b;
+      --muted: #496275;
+      --navy: #07244b;
+      --shadow: 0 24px 80px rgba(9, 55, 96, .18);
+      --soft-shadow: 0 16px 38px rgba(8, 56, 90, .13);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        linear-gradient(130deg, var(--bg), var(--bg-2) 48%, #001f26);
+      overflow-x: hidden;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(36, 216, 255, .06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(36, 216, 255, .05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), transparent 82%);
+      z-index: -3;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      background: linear-gradient(115deg, transparent 0%, transparent 38%, rgba(36,216,255,.08) 48%, transparent 58%, transparent 100%);
+      background-size: 220% 220%;
+      opacity: .55;
+      animation: skySweep 12s linear infinite;
+      z-index: -2;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    img { max-width: 100%; display: block; }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--teal), var(--green));
+      z-index: 80;
+      box-shadow: 0 0 24px rgba(36,216,255,.45);
+    }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -2;
+      opacity: .7;
+    }
+
+    .cursor-light {
+      position: fixed;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(36, 216, 255, .14), transparent 62%);
+      z-index: -1;
+      opacity: .85;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(var(--max), calc(100% - 28px));
+      min-height: 70px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: rgba(3, 19, 45, .58);
+      border: 1px solid rgba(118, 222, 255, .22);
+      border-radius: 22px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, .25);
+      z-index: 60;
+      transition: .25s ease;
+    }
+
+    :root[data-theme="light"] .nav { background: rgba(255,255,255,.74); }
+    .nav.scrolled { background: rgba(2, 13, 31, .88); border-color: rgba(17, 228, 207, .42); }
+    :root[data-theme="light"] .nav.scrolled { background: rgba(255,255,255,.92); }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 185px;
+    }
+
+    .brand img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 16px rgba(36, 216, 255, .28));
+      animation: logoBreath 5s ease-in-out infinite;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 4px;
+      font-size: .75rem;
+      color: var(--muted);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .nav-links a {
+      padding: 10px 11px;
+      color: var(--muted);
+      border-radius: 13px;
+      font-size: .92rem;
+      transition: .2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--text);
+      background: rgba(36, 216, 255, .12);
+      outline: none;
+    }
+
+    .nav-links a.active {
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(36,216,255,.16), rgba(17,201,187,.1));
+      box-shadow: inset 0 0 0 1px rgba(36,216,255,.18);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+      border: 0;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      color: #04162c;
+      background: linear-gradient(135deg, var(--cyan), var(--teal));
+      font-weight: 800;
+      box-shadow: 0 14px 28px rgba(17, 201, 187, .28);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      white-space: nowrap;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.36) 48%, transparent 58%);
+      transform: translateX(-120%);
+      transition: transform .55s ease;
+    }
+
+    .btn:hover::before,
+    .btn:focus-visible::before { transform: translateX(120%); }
+
+    .btn .ripple {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      pointer-events: none;
+      background: rgba(255,255,255,.45);
+      transform: translate(-50%, -50%) scale(0);
+      animation: rippleOut .58s ease-out forwards;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(17, 201, 187, .38); }
+    .btn:focus-visible { outline: 3px solid rgba(115, 227, 79, .45); outline-offset: 2px; }
+
+    .btn.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .btn.danger {
+      color: #fff;
+      background: linear-gradient(135deg, #ff5267, #b91732);
+      box-shadow: 0 14px 28px rgba(255, 82, 103, .22);
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .menu-btn { display: none; }
+
+    .hero {
+      min-height: 100vh;
+      padding: 132px 0 70px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(440px, 1.05fr);
+      align-items: center;
+      gap: 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--green);
+      padding: 8px 12px;
+      border: 1px solid rgba(115, 227, 79, .3);
+      background: rgba(115, 227, 79, .08);
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: .88rem;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 16px var(--green);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    .hero h1 {
+      font-size: clamp(3.6rem, 9vw, 8.4rem);
+      line-height: .86;
+      margin-bottom: 20px;
+      font-weight: 950;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, var(--white), var(--cyan), var(--green));
+      background-size: 220% 100%;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: gradientShift 5.5s ease-in-out infinite;
+    }
+
+    .hero h2 {
+      font-size: clamp(1.5rem, 3vw, 2.55rem);
+      line-height: 1.08;
+      margin-bottom: 18px;
+      max-width: 780px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.78;
+      max-width: 690px;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 34px;
+      max-width: 650px;
+    }
+
+    .mini-stat {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+    }
+
+    .mini-stat b { display: block; font-size: 1.12rem; margin-bottom: 4px; }
+    .mini-stat span { color: var(--muted); font-size: .86rem; }
+
+    .hero-visual {
+      position: relative;
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+      perspective: 1000px;
+    }
+
+    .dashboard-shell {
+      position: absolute;
+      width: min(95%, 580px);
+      height: 390px;
+      right: 0;
+      top: 70px;
+      transform: rotateY(-11deg) rotateX(6deg);
+      background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.04));
+      border: 1px solid rgba(94, 219, 255, .35);
+      border-radius: 26px;
+      box-shadow: var(--shadow), inset 0 0 38px rgba(36, 216, 255, .05);
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      animation: enterPanel .9s ease both .25s;
+    }
+
+    .dashboard-shell::before,
+    .demo-window::before,
+    .chat-demo::before,
+    .floating-chat-panel::before {
+      content: "";
+      position: absolute;
+      left: -12%;
+      right: -12%;
+      top: -20%;
+      height: 38%;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(36,216,255,.11), transparent);
+      transform: translateY(-120%);
+      animation: scanPanel 7s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    .dashboard-shell > *,
+    .demo-window > *,
+    .chat-demo > *,
+    .floating-chat-panel > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .dash-top {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+    }
+
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--red); }
+    .dot:nth-child(2) { background: var(--amber); }
+    .dot:nth-child(3) { background: var(--green); }
+
+    .dash-grid {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .metric-card,
+    .module-card,
+    .benefit-card,
+    .plan-card,
+    .glass-card {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--soft-shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .metric-card { min-height: 91px; padding: 12px; }
+    .metric-card span { color: var(--muted); font-size: .78rem; }
+    .metric-card strong { display: block; margin-top: 7px; font-size: 1.26rem; }
+
+    .growth { color: var(--green); font-size: .8rem; font-weight: 800; margin-top: 6px; }
+
+    .hero-chart {
+      grid-column: 1 / 4;
+      height: 122px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(36,216,255,.12), rgba(17,201,187,.04));
+      display: flex;
+      align-items: end;
+      gap: 10px;
+    }
+
+    .bar {
+      flex: 1;
+      min-height: 18px;
+      border-radius: 10px 10px 4px 4px;
+      background: linear-gradient(180deg, var(--cyan), var(--teal));
+      box-shadow: 0 0 22px rgba(36, 216, 255, .28);
+      transform-origin: bottom;
+      animation: barGrow .9s ease both, barPulse 4.6s ease-in-out infinite;
+    }
+
+    .bar:nth-child(2n) { animation-delay: .08s, .4s; }
+    .bar:nth-child(3n) { animation-delay: .16s, .8s; }
+
+    .robot-stage {
+      position: relative;
+      width: min(86vw, 440px);
+      margin-top: 96px;
+      z-index: 2;
+      transform-style: preserve-3d;
+      animation: enterRobot 1.15s cubic-bezier(.2,.8,.2,1) both .35s;
+    }
+
+    .robot-stage img.robot {
+      width: 100%;
+      filter: drop-shadow(0 34px 44px rgba(0,0,0,.35)) drop-shadow(0 0 34px rgba(36,216,255,.36));
+      animation: floatSavi 4.6s ease-in-out infinite;
+    }
+
+    .platform {
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      width: 72%;
+      aspect-ratio: 5 / 1;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(36,216,255,.62), rgba(17,201,187,.18) 45%, transparent 70%);
+      border: 1px solid rgba(36,216,255,.34);
+      box-shadow: 0 0 44px rgba(36,216,255,.38);
+      animation: platformPulse 2.7s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    .float-card {
+      position: absolute;
+      min-width: 150px;
+      padding: 12px 14px;
+      border: 1px solid rgba(36,216,255,.28);
+      border-radius: 16px;
+      background: rgba(5, 24, 55, .82);
+      color: var(--text);
+      box-shadow: 0 16px 45px rgba(0,0,0,.28);
+      animation: cardIn .8s ease both;
+      backdrop-filter: blur(14px);
+    }
+
+    :root[data-theme="light"] .float-card { background: rgba(255,255,255,.9); }
+    .float-card small { color: var(--muted); display: block; margin-bottom: 4px; }
+    .float-card strong { color: var(--green); }
+    .float-card.one { left: -18px; top: 130px; animation-delay: .7s; }
+    .float-card.two { right: -12px; bottom: 116px; animation-delay: .85s; }
+    .float-card.three { left: 18px; bottom: 56px; animation-delay: 1s; }
+
+    section { padding: 96px 0; position: relative; }
+
+    .section-head {
+      max-width: 780px;
+      margin-bottom: 34px;
+    }
+
+    .section-kicker {
+      color: var(--teal);
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: .78rem;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(2.05rem, 5vw, 4.25rem);
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 1.03rem;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .module-card {
+      position: relative;
+      padding: 18px;
+      min-height: 178px;
+      transform-style: preserve-3d;
+      --rx: 0deg;
+      --ry: 0deg;
+      --glow-x: 50%;
+      --glow-y: 0%;
+      transition: transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease;
+      overflow: hidden;
+    }
+
+    .module-card::after,
+    .plan-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(36,216,255,.12), transparent);
+      transform: translateX(-110%);
+      transition: transform .6s ease;
+    }
+
+    .module-card:hover {
+      transform: perspective(900px) translateY(-8px) rotateX(var(--rx)) rotateY(var(--ry));
+      border-color: var(--line-strong);
+      box-shadow: 0 22px 70px rgba(0,0,0,.34), 0 0 34px rgba(36,216,255,.13);
+    }
+
+    .module-card:hover::after,
+    .plan-card:hover::after { transform: translateX(110%); }
+
+    .module-card::before,
+    .benefit-card::before,
+    .plan-card::before,
+    .result-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(36,216,255,.2), transparent 38%),
+        linear-gradient(140deg, rgba(36,216,255,.13), transparent 36%, rgba(115,227,79,.08));
+      transition: opacity .25s ease;
+    }
+
+    .module-card:hover::before,
+    .benefit-card:hover::before,
+    .plan-card:hover::before,
+    .result-item:hover::before { opacity: 1; }
+
+    .module-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      color: #031326;
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+      font-weight: 950;
+      box-shadow: 0 0 0 rgba(36,216,255,0);
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+
+    .module-card:hover .module-icon {
+      transform: translateY(-2px) scale(1.06);
+      box-shadow: 0 0 24px rgba(36,216,255,.28);
+    }
+
+    .module-icon svg {
+      width: 25px;
+      height: 25px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .module-card h3 { margin-bottom: 8px; font-size: 1.05rem; }
+    .module-card p { color: var(--muted); line-height: 1.55; font-size: .92rem; margin: 0; }
+
+    .demo-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .system-demo {
+      border: 1px solid rgba(36,216,255,.28);
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      padding: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+
+    .demo-window {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: rgba(3, 14, 35, .86);
+    }
+
+    :root[data-theme="light"] .demo-window { background: rgba(255,255,255,.88); }
+
+    .demo-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .demo-head strong { font-size: 1rem; }
+    .demo-head span { color: var(--green); font-size: .84rem; font-weight: 800; }
+
+    .demo-body {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .demo-chart {
+      min-height: 220px;
+      grid-column: 1 / 3;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.05);
+    }
+
+    .chart-lines {
+      height: 138px;
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      margin-top: 20px;
+      border-bottom: 1px solid rgba(255,255,255,.13);
+    }
+
+    .recent-table {
+      grid-column: 1 / 3;
+      display: grid;
+      gap: 8px;
+    }
+
+    .recent-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .recent-row strong { color: var(--text); }
+    .demo-side { display: grid; gap: 14px; }
+
+    .alert-card {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,189,69,.32);
+      background: rgba(255,189,69,.1);
+    }
+
+    .alert-card h3 { color: var(--amber); }
+    .alert-card p, .glass-card p { color: var(--muted); line-height: 1.65; margin-bottom: 0; }
+
+    .savi-section {
+      overflow: hidden;
+    }
+
+    .savi-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, .85fr) minmax(0, 1.15fr);
+      gap: 34px;
+      align-items: center;
+    }
+
+    .savi-orbit {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      place-items: center;
+    }
+
+    .savi-orbit .robot-stage { margin: 0; width: min(88%, 390px); }
+
+    .orbit-panel {
+      position: absolute;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(6, 25, 56, .82);
+      border: 1px solid var(--line);
+      color: var(--text);
+      box-shadow: var(--soft-shadow);
+      font-size: .88rem;
+      max-width: 235px;
+    }
+
+    :root[data-theme="light"] .orbit-panel { background: rgba(255,255,255,.88); }
+    .orbit-panel:nth-child(2) { top: 50px; left: 4px; }
+    .orbit-panel:nth-child(3) { top: 82px; right: 0; }
+    .orbit-panel:nth-child(4) { bottom: 110px; left: 8px; }
+    .orbit-panel:nth-child(5) { bottom: 78px; right: 12px; }
+
+    .chat-demo,
+    .floating-chat-panel {
+      position: relative;
+      border: 1px solid rgba(36,216,255,.28);
+      background: rgba(3, 16, 39, .88);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+
+    :root[data-theme="light"] .chat-demo,
+    :root[data-theme="light"] .floating-chat-panel { background: rgba(255,255,255,.94); }
+
+    .chat-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .chat-head img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      border-radius: 16px;
+      background: rgba(36,216,255,.09);
+    }
+
+    .chat-head small { color: var(--green); font-weight: 800; }
+
+    .chat-body {
+      min-height: 430px;
+      max-height: 480px;
+      overflow: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .msg {
+      max-width: 82%;
+      padding: 13px 14px;
+      border-radius: 17px;
+      line-height: 1.55;
+      font-size: .95rem;
+      border: 1px solid rgba(255,255,255,.08);
+      animation: messageUp .28s ease both;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, rgba(17,201,187,.95), rgba(11, 105, 255, .78));
+      color: #fff;
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: rgba(255,255,255,.07);
+    }
+
+    .typing {
+      align-self: flex-start;
+      display: inline-flex;
+      gap: 5px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.07);
+    }
+
+    .typing i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: blink .9s infinite alternate;
+    }
+
+    .typing i:nth-child(2) { animation-delay: .15s; }
+    .typing i:nth-child(3) { animation-delay: .3s; }
+
+    .chat-actions {
+      padding: 14px 16px 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+    }
+
+    .chat-actions .btn { min-height: 38px; padding: 0 12px; font-size: .85rem; }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 33px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--teal), var(--green));
+      opacity: .42;
+    }
+
+    .step {
+      position: relative;
+      padding: 76px 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      overflow: hidden;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .step:hover {
+      transform: translateY(-6px);
+      border-color: var(--line-strong);
+      box-shadow: 0 20px 54px rgba(0,0,0,.22);
+    }
+
+    .step-no {
+      position: absolute;
+      top: 15px;
+      left: 18px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--cyan), var(--teal));
+      color: #04162c;
+      font-weight: 950;
+      box-shadow: 0 0 30px rgba(36,216,255,.34);
+    }
+
+    .sunat-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .flow-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 154px;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .flow-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--line-strong);
+      box-shadow: 0 20px 54px rgba(0,0,0,.22);
+    }
+
+    .flow-arrow {
+      color: var(--cyan);
+      font-size: 2rem;
+      font-weight: 900;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .benefit-card {
+      padding: 18px;
+      min-height: 142px;
+      position: relative;
+      overflow: hidden;
+      --rx: 0deg;
+      --ry: 0deg;
+      --glow-x: 50%;
+      --glow-y: 0%;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .benefit-card:hover {
+      transform: perspective(900px) translateY(-6px) rotateX(var(--rx)) rotateY(var(--ry));
+      border-color: var(--line-strong);
+      box-shadow: 0 20px 54px rgba(0,0,0,.22);
+    }
+
+    .benefit-card strong { display: block; margin-bottom: 8px; }
+    .benefit-card span { color: var(--muted); font-size: .9rem; line-height: 1.5; }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .plan-card {
+      position: relative;
+      padding: 24px;
+      overflow: hidden;
+      --rx: 0deg;
+      --ry: 0deg;
+      --glow-x: 50%;
+      --glow-y: 0%;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .plan-card:hover {
+      transform: perspective(900px) translateY(-8px) rotateX(var(--rx)) rotateY(var(--ry));
+      border-color: var(--line-strong);
+      box-shadow: 0 22px 70px rgba(0,0,0,.28), 0 0 34px rgba(36,216,255,.12);
+    }
+    .plan-card.recommended {
+      border-color: rgba(115,227,79,.5);
+      box-shadow: 0 24px 80px rgba(17,201,187,.2);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(115,227,79,.12);
+      color: var(--green);
+      font-weight: 900;
+      font-size: .78rem;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin: 18px 0;
+    }
+
+    .price strong { font-size: 2.4rem; }
+    .price span { color: var(--muted); }
+
+    .plan-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 22px;
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .plan-card li::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 10px;
+      background: var(--green);
+      box-shadow: 0 0 14px rgba(115,227,79,.4);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .result-item {
+      position: relative;
+      overflow: hidden;
+      --rx: 0deg;
+      --ry: 0deg;
+      --glow-x: 50%;
+      --glow-y: 0%;
+      padding: 22px 16px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(36,216,255,.12), rgba(17,201,187,.05));
+      border: 1px solid var(--line);
+      min-height: 144px;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .result-item:hover {
+      transform: perspective(900px) translateY(-6px) rotateX(var(--rx)) rotateY(var(--ry));
+      border-color: var(--line-strong);
+      box-shadow: 0 20px 54px rgba(0,0,0,.22);
+    }
+
+    .result-item b {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      color: var(--cyan);
+    }
+
+    .cta {
+      padding: 120px 0;
+    }
+
+    .cta-box {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) 260px;
+      gap: 24px;
+      align-items: center;
+      padding: clamp(30px, 6vw, 70px);
+      border-radius: 32px;
+      border: 1px solid var(--line-strong);
+      background:
+        linear-gradient(135deg, rgba(21,109,255,.18), rgba(17,201,187,.1)),
+        var(--surface-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .cta-box h2 { font-size: clamp(2.2rem, 6vw, 5rem); line-height: 1; }
+    .cta-box p { color: var(--muted); line-height: 1.75; max-width: 700px; }
+    .cta-box img { width: 250px; filter: drop-shadow(0 0 34px rgba(36,216,255,.32)); animation: floatSavi 5s ease-in-out infinite; }
+
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--line);
+      background: rgba(0,0,0,.14);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.25fr repeat(3, minmax(0, .7fr));
+      gap: 24px;
+    }
+
+    footer p, footer a { color: var(--muted); line-height: 1.7; }
+    footer a:hover { color: var(--cyan); }
+
+    .floating-savi {
+      position: fixed;
+      right: 20px;
+      bottom: 22px;
+      width: 74px;
+      height: 74px;
+      border: 1px solid rgba(36,216,255,.45);
+      border-radius: 24px;
+      background: rgba(5, 23, 52, .86);
+      display: grid;
+      place-items: center;
+      z-index: 70;
+      box-shadow: 0 20px 48px rgba(0,0,0,.35), 0 0 30px rgba(36,216,255,.24);
+    }
+
+    .floating-savi::after {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 28px;
+      border: 1px solid rgba(36,216,255,.35);
+      opacity: .6;
+      animation: pulseRing 2.4s ease-in-out infinite;
+    }
+
+    .floating-savi img { width: 64px; height: 64px; object-fit: contain; }
+
+    .floating-chat-panel {
+      position: fixed;
+      right: 20px;
+      bottom: 108px;
+      width: min(390px, calc(100vw - 32px));
+      transform: translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 71;
+      transition: .25s ease;
+    }
+
+    .floating-chat-panel.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .float-chat-messages {
+      height: 300px;
+      overflow: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .float-chat-form {
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .float-chat-form input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+      padding: 0 12px;
+      outline: none;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 24px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 90;
+      padding: 14px 18px;
+      border-radius: 16px;
+      color: var(--text);
+      background: rgba(5, 23, 52, .92);
+      border: 1px solid var(--line-strong);
+      box-shadow: var(--soft-shadow);
+      transition: .24s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .to-top {
+      position: fixed;
+      left: 20px;
+      bottom: 22px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 70;
+    }
+
+    .to-top.show { opacity: 1; pointer-events: auto; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .55s ease, transform .55s ease;
+      transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes enterPanel { from { opacity: 0; transform: translateY(28px) rotateY(-11deg) rotateX(6deg); } to { opacity: 1; } }
+    @keyframes enterRobot { from { opacity: 0; transform: translateY(42px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes floatSavi { 0%,100% { transform: translateY(0) rotateZ(-1deg); } 50% { transform: translateY(-16px) rotateZ(1deg); } }
+    @keyframes platformPulse { 0%,100% { opacity: .62; transform: translateX(-50%) scaleX(1); } 50% { opacity: .95; transform: translateX(-50%) scaleX(1.08); } }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(18px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes barGrow { from { transform: scaleY(.12); } to { transform: scaleY(1); } }
+    @keyframes barPulse { 0%,100% { filter: saturate(1); opacity: .86; } 50% { filter: saturate(1.35); opacity: 1; } }
+    @keyframes messageUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes blink { from { opacity: .35; transform: translateY(0); } to { opacity: 1; transform: translateY(-3px); } }
+    @keyframes mobileMenuIn { from { opacity: 0; transform: translateY(-10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes softGlow { 0%,100% { box-shadow: 0 16px 40px rgba(0,0,0,.28), 0 0 0 rgba(36,216,255,0); } 50% { box-shadow: 0 20px 54px rgba(0,0,0,.34), 0 0 30px rgba(36,216,255,.18); } }
+    @keyframes skySweep { from { background-position: 0% 0%; } to { background-position: 220% 220%; } }
+    @keyframes scanPanel { 0%, 58%, 100% { transform: translateY(-130%); opacity: 0; } 72% { opacity: .72; } 88% { transform: translateY(360%); opacity: 0; } }
+    @keyframes gradientShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes logoBreath { 0%,100% { filter: drop-shadow(0 0 14px rgba(36,216,255,.25)); transform: translateY(0); } 50% { filter: drop-shadow(0 0 24px rgba(36,216,255,.45)); transform: translateY(-1px); } }
+    @keyframes pulseRing { 0%,100% { transform: scale(.94); opacity: .18; } 50% { transform: scale(1.08); opacity: .55; } }
+    @keyframes rippleOut { to { transform: translate(-50%, -50%) scale(18); opacity: 0; } }
+
+    @media (max-width: 1100px) {
+      .nav-links {
+        position: fixed;
+        top: 86px;
+        left: 14px;
+        right: 14px;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        background: var(--surface-strong);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 10px;
+        box-shadow: var(--shadow);
+      }
+      .nav-links.open { display: flex; animation: mobileMenuIn .22s ease both; }
+      .nav-links a { padding: 14px 15px; border: 1px solid transparent; }
+      .nav-links a:hover,
+      .nav-links a:focus-visible {
+        border-color: rgba(36,216,255,.22);
+        background: linear-gradient(135deg, rgba(36,216,255,.12), rgba(17,201,187,.08));
+      }
+      .menu-btn { display: grid; }
+      .nav-actions .btn { display: none; }
+      .hero-grid, .demo-layout, .savi-grid, .cta-box { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 560px; }
+      .dashboard-shell { right: 50%; transform: translateX(50%) rotateY(-6deg) rotateX(4deg); }
+      .module-grid, .benefits-grid, .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .timeline::before { display: none; }
+      .sunat-flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); text-align: center; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .container { width: min(100% - 24px, var(--max)); }
+      body {
+        background:
+          linear-gradient(160deg, #020b1d, #04234d 58%, #00312f);
+      }
+      body::before { background-size: 34px 34px; opacity: .7; }
+      #particles { opacity: .36; }
+      .cursor-light { display: none; }
+      .nav {
+        top: 10px;
+        width: calc(100% - 20px);
+        min-height: 62px;
+        border-radius: 18px;
+        padding: 8px;
+      }
+      .brand { min-width: 0; }
+      .brand img { width: 42px; height: 42px; }
+      .brand span { display: none; }
+      .nav-actions { gap: 7px; }
+      .nav-actions .icon-btn {
+        position: relative;
+        width: 42px;
+        height: 42px;
+        font-size: 0;
+      }
+      .nav-actions .icon-btn::before,
+      .nav-actions .icon-btn::after {
+        content: "";
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+      #themeToggle::before {
+        inset: 11px;
+        left: 11px;
+        right: auto;
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+        box-shadow: 0 0 16px rgba(36,216,255,.45);
+      }
+      #themeToggle::after {
+        top: 10px;
+        left: 22px;
+        right: auto;
+        width: 11px;
+        height: 22px;
+        border-radius: 0 999px 999px 0;
+        background: rgba(5,23,52,.94);
+      }
+      .menu-btn::before { top: 14px; height: 2px; }
+      .menu-btn::after { bottom: 14px; height: 2px; }
+      .menu-btn { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: center; background-size: 18px 2px; }
+      .nav-links {
+        top: 78px;
+        left: 10px;
+        right: 10px;
+        border-radius: 22px;
+        padding: 12px;
+        gap: 6px;
+        background:
+          linear-gradient(145deg, rgba(36,216,255,.09), rgba(17,201,187,.04)),
+          rgba(3, 15, 38, .96);
+      }
+      .nav-links a {
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        color: var(--text);
+        border-color: rgba(36,216,255,.12);
+        background: rgba(255,255,255,.045);
+      }
+      .hero {
+        min-height: auto;
+        padding: 104px 0 44px;
+        align-items: start;
+      }
+      .hero-copy,
+      .hero-grid,
+      .demo-side,
+      .section-head,
+      .cta-box {
+        min-width: 0;
+      }
+      .hero-grid { gap: 26px; }
+      .hero-copy { text-align: center; }
+      .eyebrow {
+        margin-inline: auto;
+        max-width: 100%;
+        font-size: .78rem;
+        padding: 8px 11px;
+      }
+      .hero h1 {
+        font-size: clamp(2.55rem, 12vw, 3.35rem);
+        line-height: .94;
+        max-width: 100%;
+        margin-bottom: 14px;
+      }
+      .hero h1 .gradient-text { display: block; }
+      .hero h2 {
+        font-size: clamp(1.35rem, 7vw, 2rem);
+        line-height: 1.12;
+      }
+      .hero p {
+        font-size: .98rem;
+        line-height: 1.65;
+        margin-bottom: 22px;
+        max-width: 100%;
+      }
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .btn { width: 100%; min-height: 48px; }
+      .hero-meta {
+        display: flex;
+        grid-template-columns: none;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 2px 2px 10px;
+        margin-top: 24px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+      .hero-meta::-webkit-scrollbar { display: none; }
+      .mini-stat {
+        min-width: 78%;
+        text-align: left;
+        scroll-snap-align: start;
+        background: linear-gradient(145deg, rgba(36,216,255,.1), rgba(255,255,255,.04));
+      }
+      .module-grid, .benefits-grid, .results-grid, .plans, .timeline, .footer-grid { grid-template-columns: 1fr; }
+      .hero-visual {
+        min-height: auto;
+        display: grid;
+        gap: 13px;
+        place-items: stretch;
+        perspective: none;
+      }
+      .dashboard-shell {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 306px;
+        top: auto;
+        right: auto;
+        transform: none;
+        border-radius: 22px;
+        animation: softGlow 4.4s ease-in-out infinite;
+      }
+      .dash-grid { grid-template-columns: 1fr 1fr; }
+      .hero-chart { grid-column: 1 / 3; }
+      .robot-stage {
+        width: min(76vw, 280px);
+        margin: 10px auto 8px;
+      }
+      .float-card {
+        position: relative;
+        inset: auto !important;
+        min-width: 0;
+        margin: 0;
+        width: 100%;
+        text-align: left;
+        animation: messageUp .35s ease both;
+      }
+      section { padding: 64px 0; }
+      .section-head {
+        margin-bottom: 24px;
+        text-align: left;
+      }
+      .section-head h2 {
+        font-size: clamp(1.9rem, 10vw, 3rem);
+        line-height: 1.04;
+      }
+      .section-head p { font-size: .98rem; line-height: 1.65; }
+      .module-card {
+        min-height: auto;
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr);
+        grid-template-areas:
+          "icon title"
+          "icon text";
+        column-gap: 14px;
+        padding: 16px;
+      }
+      .module-card:hover { transform: translateY(-4px); }
+      .module-icon {
+        grid-area: icon;
+        width: 48px;
+        height: 48px;
+        margin: 0;
+        border-radius: 15px;
+      }
+      .module-card h3 { grid-area: title; margin: 0 0 5px; }
+      .module-card p { grid-area: text; line-height: 1.48; }
+      .system-demo {
+        padding: 9px;
+        border-radius: 22px;
+      }
+      .demo-head { padding: 13px; }
+      .demo-body, .demo-chart, .recent-table { grid-template-columns: 1fr; grid-column: auto; }
+      .recent-row { grid-template-columns: 1fr; }
+      .savi-orbit {
+        min-height: auto;
+        display: grid;
+        gap: 10px;
+      }
+      .savi-orbit .robot-stage { width: min(72vw, 270px); }
+      .orbit-panel {
+        position: relative;
+        inset: auto !important;
+        margin: 0;
+        max-width: none;
+        width: 100%;
+      }
+      .chat-demo { border-radius: 22px; }
+      .chat-body {
+        min-height: 350px;
+        max-height: 420px;
+        padding: 14px;
+      }
+      .msg { max-width: 92%; }
+      .chat-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .chat-actions .btn { width: 100%; }
+      .timeline { gap: 12px; }
+      .step {
+        padding: 18px 18px 18px 68px;
+        min-height: 106px;
+      }
+      .step-no { top: 18px; left: 18px; }
+      .flow-card { min-height: auto; }
+      .benefit-card, .result-item, .plan-card {
+        min-height: auto;
+        border-radius: 18px;
+      }
+      .plan-card { padding: 20px; }
+      .price strong { font-size: 2rem; }
+      .cta { padding: 72px 0; }
+      .cta-box {
+        border-radius: 24px;
+        padding: 26px 18px;
+        text-align: center;
+      }
+      .cta-box h2 { font-size: clamp(2rem, 11vw, 3.2rem); }
+      .cta-box img { justify-self: center; }
+      footer { padding: 38px 0 94px; }
+      footer .brand span { display: block; }
+      .floating-savi {
+        right: 14px;
+        bottom: max(14px, env(safe-area-inset-bottom));
+        width: 64px;
+        height: 64px;
+        border-radius: 21px;
+      }
+      .floating-savi img { width: 55px; height: 55px; }
+      .floating-chat-panel {
+        right: 12px;
+        bottom: calc(88px + env(safe-area-inset-bottom));
+        width: calc(100vw - 24px);
+        max-height: calc(100svh - 110px);
+      }
+      .float-chat-messages { height: min(310px, 45svh); }
+      .to-top {
+        left: 14px;
+        bottom: max(14px, env(safe-area-inset-bottom));
+      }
+      .toast {
+        width: calc(100% - 24px);
+        bottom: calc(92px + env(safe-area-inset-bottom));
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .container { width: min(100% - 18px, var(--max)); }
+      .nav { width: calc(100% - 14px); }
+      .hero h1 { font-size: clamp(2.35rem, 11.5vw, 3.05rem); }
+      .hero h2 { font-size: 1.35rem; }
+      .dashboard-shell { min-height: 282px; }
+      .metric-card { min-height: 82px; padding: 10px; }
+      .metric-card strong { font-size: 1.05rem; }
+      .hero-chart { height: 105px; }
+      .mini-stat { min-width: 86%; }
+      .module-card {
+        grid-template-columns: 46px minmax(0, 1fr);
+        column-gap: 12px;
+      }
+      .module-icon { width: 44px; height: 44px; }
+      .chat-actions { grid-template-columns: 1fr; }
+      .sunat-flow { gap: 10px; }
+      .flow-arrow { font-size: 1.55rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+      #particles, .cursor-light, body::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="cursor-light" id="cursorLight" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav" aria-label="Navegacion principal">
+    <a class="brand" href="#inicio" aria-label="Ir al inicio de SmartVentas">
+      <img src="public/img/smartventas-mark.png" alt="Logo SmartVentas" loading="eager">
+      <span><strong>SmartVentas</strong><span>Ventas inteligentes</span></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#inicio">Inicio</a>
+      <a href="#funciones">Funciones</a>
+      <a href="#savi">SAVI</a>
+      <a href="#demo">Demostracion</a>
+      <a href="#planes">Planes</a>
+      <a href="#sunat">SUNAT</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Cambiar modo claro u oscuro">DM</button>
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Abrir menu">M</button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Sistema web con asistente inteligente</div>
+          <h1><span class="gradient-text">SmartVentas</span></h1>
+          <h2>Ventas inteligentes para negocios que quieren crecer</h2>
+          <p>Gestiona ventas, inventario, caja, clientes, reportes y contabilidad desde una sola plataforma. SmartVentas centraliza la operacion diaria y convierte los datos de tu negocio en decisiones claras.</p>
+          <div class="hero-actions">
+            <a class="btn" href="#demo">Ver demostracion</a>
+            <a class="btn secondary" href="#savi">Conocer a SAVI</a>
+          </div>
+          <div class="hero-meta">
+            <div class="mini-stat"><b>POS rapido</b><span>Ventas con vuelto y metodos de pago.</span></div>
+            <div class="mini-stat"><b>Kardex</b><span>Entradas, salidas y stock valorizado.</span></div>
+            <div class="mini-stat"><b>PCGE</b><span>Reportes contables para revision.</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" id="heroVisual">
+          <div class="dashboard-shell" aria-label="Panel visual de SmartVentas">
+            <div class="dash-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><strong>Panel SmartVentas</strong></div>
+            <div class="dash-grid">
+              <div class="metric-card"><span>Ventas del dia</span><strong>S/ 825.60</strong><div class="growth">Activo</div></div>
+              <div class="metric-card"><span>Stock bajo</span><strong>12</strong><div class="growth">Alertas</div></div>
+              <div class="metric-card"><span>Clientes</span><strong>128</strong><div class="growth">Registrados</div></div>
+              <div class="hero-chart" aria-label="Grafico visual de crecimiento">
+                <i class="bar" style="height:38%"></i><i class="bar" style="height:56%"></i><i class="bar" style="height:48%"></i><i class="bar" style="height:72%"></i><i class="bar" style="height:63%"></i><i class="bar" style="height:86%"></i><i class="bar" style="height:78%"></i>
+              </div>
+            </div>
+          </div>
+          <div class="robot-stage">
+            <img class="robot" src="public/img/smartventas-ai-robot-transparent.png" alt="Robot SAVI flotando" loading="eager">
+            <span class="platform" aria-hidden="true"></span>
+          </div>
+          <div class="float-card one"><small>Inventario</small><strong>Stock controlado</strong></div>
+          <div class="float-card two"><small>Reportes</small><strong>Datos listos</strong></div>
+          <div class="float-card three"><small>Caja</small><strong>Cierre diario</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="funciones">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="section-kicker">Todo en un solo lugar</div>
+          <h2>Control completo del negocio desde una plataforma inteligente</h2>
+          <p>SmartVentas agrupa los procesos que un pequeno negocio necesita para vender, controlar mercaderia, registrar movimientos, revisar resultados y entregar informacion ordenada al contador.</p>
+        </div>
+        <div class="module-grid">
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H7"></path><path d="M12 6l2 2 4-4"></path></svg></div><h3>Ventas</h3><p>Caja rapida, carrito, vuelto automatico, comprobantes y control de stock.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z"></path><path d="M3 7.5v9L12 21l9-4.5v-9"></path><path d="M12 12v9"></path></svg></div><h3>Inventario</h3><p>Productos, categorias, stock, kardex y alertas para reposicion.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="2"></rect><path d="M8 7V5h8v2"></path><path d="M8 12h4"></path><path d="M16 12h.01"></path><path d="M8 16h8"></path></svg></div><h3>Caja</h3><p>Apertura, cierre diario, metodos de pago y resumen operativo.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h11v10H4z"></path><path d="M15 10h3l2 3v4h-5z"></path><circle cx="8" cy="19" r="1.5"></circle><circle cx="18" cy="19" r="1.5"></circle><path d="M7 4h8"></path></svg></div><h3>Compras</h3><p>Ingreso de mercaderia, proveedores, costos y actualizacion de stock.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3.5 20a5.5 5.5 0 0 1 11 0"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M15.5 15.5A4.5 4.5 0 0 1 21 20"></path></svg></div><h3>Clientes</h3><p>Registro de DNI, RUC, razon social y datos comerciales.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V6l8-3 8 3v14"></path><path d="M9 20v-7h6v7"></path><path d="M7 9h.01M12 8h.01M17 9h.01"></path></svg></div><h3>Proveedores</h3><p>Organiza contactos, compras y trazabilidad de abastecimiento.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><rect x="7" y="12" width="3" height="5" rx="1"></rect><rect x="12" y="8" width="3" height="9" rx="1"></rect><rect x="17" y="4" width="3" height="13" rx="1"></rect></svg></div><h3>Reportes</h3><p>Ventas, compras, productos, movimientos y exportaciones utiles.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M8 7h8"></path><path d="M8 11h2M12 11h2M16 11h.01"></path><path d="M8 15h2M12 15h2M16 15h.01"></path></svg></div><h3>Contabilidad</h3><p>Asientos PCGE, IGV, mayor, libro diario y reportes para revision.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.2 7.5-8 9-4.8-1.5-8-4-8-9V6l8-3Z"></path><circle cx="12" cy="10" r="2.2"></circle><path d="M8.5 16a4 4 0 0 1 7 0"></path></svg></div><h3>Usuarios</h3><p>Roles, permisos y accesos por administrador, cajero o contador.</p></article>
+          <article class="module-card reveal"><div class="module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="10" rx="4"></rect><circle cx="9.5" cy="12" r="1.2"></circle><circle cx="14.5" cy="12" r="1.2"></circle><path d="M12 7V4"></path><path d="M8 18l-2 3"></path><path d="M16 18l2 3"></path><path d="M9 15c1.6 1 4.4 1 6 0"></path></svg></div><h3>SAVI IA</h3><p>Asistente para consultar datos, explicar reportes y preparar acciones.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <div class="container demo-layout">
+        <div class="system-demo reveal">
+          <div class="demo-window">
+            <div class="demo-head"><strong>Demostracion SmartVentas</strong><span>En linea</span></div>
+            <div class="demo-body">
+              <div class="metric-card"><span>Ventas del dia</span><strong data-counter="825.60" data-prefix="S/ ">S/ 0.00</strong><div class="growth">Caja activa</div></div>
+              <div class="metric-card"><span>Productos</span><strong data-counter="256">0</strong><div class="growth">Registrados</div></div>
+              <div class="metric-card"><span>Stock bajo</span><strong data-counter="12">0</strong><div class="growth">Revisar</div></div>
+              <div class="metric-card"><span>Clientes</span><strong data-counter="128">0</strong><div class="growth">Base comercial</div></div>
+              <div class="demo-chart">
+                <strong>Ventas recientes</strong>
+                <div class="chart-lines"><i class="bar" style="height:34%"></i><i class="bar" style="height:46%"></i><i class="bar" style="height:62%"></i><i class="bar" style="height:52%"></i><i class="bar" style="height:80%"></i><i class="bar" style="height:71%"></i><i class="bar" style="height:90%"></i></div>
+              </div>
+              <div class="recent-table">
+                <div class="recent-row"><strong>Boleta B001</strong><span>Cliente general</span><span>S/ 36.50</span></div>
+                <div class="recent-row"><strong>Factura F001</strong><span>Empresa Demo SAC</span><span>S/ 118.00</span></div>
+                <div class="recent-row"><strong>Caja</strong><span>Efectivo y Yape</span><span>Listo</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-side reveal">
+          <div class="section-head">
+            <div class="section-kicker">Demostracion del sistema</div>
+            <h2>Un panel operativo con datos claros</h2>
+            <p>La interfaz muestra ventas, inventario, clientes, alertas y accesos rapidos para que el negocio trabaje con menos pasos y mas control.</p>
+          </div>
+          <div class="alert-card"><h3>Alertas inteligentes</h3><p>SmartVentas detecta productos criticos, caja pendiente de cierre y movimientos que necesitan revision.</p></div>
+          <div class="glass-card" style="padding:18px"><h3>Accesos rapidos</h3><p>Ventas, compras, kardex, caja, comprobantes y reportes se organizan en una experiencia enfocada en el trabajo diario.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="savi-section" id="savi">
+      <div class="container savi-grid">
+        <div class="savi-orbit reveal">
+          <div class="robot-stage"><img class="robot" src="public/img/smartventas-ai-robot-transparent.png" alt="SAVI asistente inteligente"><span class="platform" aria-hidden="true"></span></div>
+          <div class="orbit-panel">Cuanto vendimos hoy?</div>
+          <div class="orbit-panel">Muestrame productos con poco stock.</div>
+          <div class="orbit-panel">Genera el reporte mensual.</div>
+          <div class="orbit-panel">Prepara un resumen de caja.</div>
+        </div>
+        <div class="reveal">
+          <div class="section-head">
+            <div class="section-kicker">Asistente inteligente</div>
+            <h2>Conoce a <span class="gradient-text">SAVI</span></h2>
+            <p>SAVI ayuda a consultar informacion, analizar ventas, revisar inventario, generar reportes y ejecutar acciones dentro del sistema mediante instrucciones sencillas y confirmacion previa.</p>
+          </div>
+          <div class="chat-demo" aria-label="Demo de chat SAVI">
+            <div class="chat-head"><img src="public/img/smartventas-ai-robot.png" alt="Avatar SAVI"><div><strong>SAVI</strong><br><small>En linea</small></div></div>
+            <div class="chat-body" id="demoChat"></div>
+            <div class="chat-actions">
+              <button class="btn secondary" type="button" data-chat-action="productos">Ver productos</button>
+              <button class="btn secondary" type="button" data-chat-action="reporte">Generar reporte</button>
+              <button class="btn" type="button" data-chat-action="aceptar">Aceptar accion</button>
+              <button class="btn danger" type="button" data-chat-action="cancelar">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="section-kicker">Como funciona</div>
+          <h2>De la configuracion al analisis en cuatro pasos</h2>
+        </div>
+        <div class="timeline">
+          <article class="step reveal"><div class="step-no">1</div><h3>Registra tu negocio</h3><p>Define datos principales, moneda, usuarios y forma de trabajo.</p></article>
+          <article class="step reveal"><div class="step-no">2</div><h3>Configura productos</h3><p>Crea categorias, articulos, precios, proveedores y permisos.</p></article>
+          <article class="step reveal"><div class="step-no">3</div><h3>Controla operaciones</h3><p>Registra ventas, compras, caja, clientes y movimientos de stock.</p></article>
+          <article class="step reveal"><div class="step-no">4</div><h3>Analiza con SAVI</h3><p>Consulta reportes, alertas y recomendaciones desde el asistente.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="sunat">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="section-kicker">Comprobantes y SUNAT</div>
+          <h2>Comprobantes y gestion para SUNAT</h2>
+          <p>SmartVentas cuenta con facturacion electronica para negocios del Regimen MYPE Tributario y del Regimen Especial, segun la configuracion disponible en el sistema. Para negocios del Nuevo RUS, permite registrar la venta y descargar los datos necesarios para emitir manualmente la boleta desde SUNAT Operaciones en Linea.</p>
+        </div>
+        <div class="sunat-flow reveal">
+          <div class="flow-card"><h3>Venta registrada</h3><p>El sistema guarda cliente, productos, pagos, fecha y comprobante.</p></div>
+          <div class="flow-arrow" aria-hidden="true">></div>
+          <div class="flow-card"><h3>Comprobante</h3><p>Boleta, factura o ticket con datos listos para imprimir o procesar.</p></div>
+          <div class="flow-arrow" aria-hidden="true">></div>
+          <div class="flow-card"><h3>SUNAT</h3><p>Envio configurado o exportacion de datos para gestion manual cuando corresponda.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="beneficios">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="section-kicker">Beneficios</div>
+          <h2>Menos trabajo manual, mas control operativo</h2>
+        </div>
+        <div class="benefits-grid">
+          <div class="benefit-card reveal"><strong>Menos errores</strong><span>Registros ordenados y calculos automatizados.</span></div>
+          <div class="benefit-card reveal"><strong>Control de stock</strong><span>Entradas, salidas y alertas de reposicion.</span></div>
+          <div class="benefit-card reveal"><strong>Ventas rapidas</strong><span>POS con carrito, vuelto y metodos reales.</span></div>
+          <div class="benefit-card reveal"><strong>Reportes</strong><span>Informacion lista para revisar y exportar.</span></div>
+          <div class="benefit-card reveal"><strong>Datos centralizados</strong><span>Clientes, proveedores, compras y ventas conectados.</span></div>
+          <div class="benefit-card reveal"><strong>Acceso movil</strong><span>Consulta y asistencia desde computadora o celular.</span></div>
+          <div class="benefit-card reveal"><strong>Caja controlada</strong><span>Aperturas, cierres y resumen por metodo de pago.</span></div>
+          <div class="benefit-card reveal"><strong>Asistencia inteligente</strong><span>SAVI interpreta consultas y prepara acciones.</span></div>
+          <div class="benefit-card reveal"><strong>Gestion contable</strong><span>Asientos, PCGE, IGV y libros de apoyo.</span></div>
+          <div class="benefit-card reveal"><strong>Decision con datos</strong><span>Indicadores claros para actuar a tiempo.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="planes">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="section-kicker">Planes</div>
+          <h2>Planes pensados para negocios pequenos y en crecimiento</h2>
+          <p>Instalacion base: <strong>S/ 50 por unica vez</strong>. Los planes pueden adaptarse segun configuracion y soporte requerido.</p>
+        </div>
+        <div class="plans">
+          <article class="plan-card reveal"><span class="badge">Basico</span><h3>BASICO</h3><div class="price"><strong>S/ 20</strong><span>al mes</span></div><ul><li>Ventas e inventario</li><li>Clientes y productos</li><li>Reportes basicos</li></ul><button class="btn secondary" type="button" data-plan="Basico">Elegir plan</button></article>
+          <article class="plan-card recommended reveal"><span class="badge">Mas recomendado</span><h3>PRO</h3><div class="price"><strong>S/ 35</strong><span>al mes</span></div><ul><li>Caja y metodos de pago</li><li>Reportes avanzados</li><li>SAVI para consultas</li></ul><button class="btn" type="button" data-plan="Pro">Elegir plan</button></article>
+          <article class="plan-card reveal"><span class="badge">Premium</span><h3>PREMIUM</h3><div class="price"><strong>S/ 55</strong><span>al mes</span></div><ul><li>Contabilidad PCGE</li><li>Comprobantes y SUNAT</li><li>Alertas inteligentes</li></ul><button class="btn secondary" type="button" data-plan="Premium">Elegir plan</button></article>
+          <article class="plan-card reveal"><span class="badge">VIP</span><h3>NEGOCIO VIP</h3><div class="price"><strong>S/ 85</strong><span>desde</span></div><ul><li>Configuracion completa</li><li>Soporte prioritario</li><li>Personalizacion del flujo</li></ul><button class="btn secondary" type="button" data-plan="VIP">Elegir plan</button></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultados">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="section-kicker">Resultados esperados</div>
+          <h2>Operacion visible y ordenada todos los dias</h2>
+        </div>
+        <div class="results-grid">
+          <div class="result-item reveal"><b>Tiempo real</b><span>Control de ventas y caja durante la jornada.</span></div>
+          <div class="result-item reveal"><b>Alertas</b><span>Inventario critico antes de quedarse sin productos.</span></div>
+          <div class="result-item reveal"><b>Reportes</b><span>Informacion disponible para decisiones y revision.</span></div>
+          <div class="result-item reveal"><b>Dispositivos</b><span>Acceso desde computadora y celular segun configuracion.</span></div>
+          <div class="result-item reveal"><b>Menos tareas</b><span>Procesos repetitivos reducidos con automatizacion.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="contacto">
+      <div class="container">
+        <div class="cta-box reveal">
+          <div>
+            <h2>Transforma la gestion de tu negocio con SmartVentas</h2>
+            <p>Controla tus ventas, inventario, caja y reportes desde una sola plataforma inteligente.</p>
+            <div class="hero-actions">
+              <a class="btn secondary" href="#planes">Conocer los planes</a>
+            </div>
+          </div>
+          <img src="public/img/smartventas-ai-robot-transparent.png" alt="SAVI listo para una demostracion" loading="lazy">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="#inicio"><img src="public/img/smartventas-mark.png" alt="Logo SmartVentas"><span><strong>SmartVentas</strong><span>Desarrollado para la gestion inteligente de negocios</span></span></a>
+        <p>Plataforma web para ventas, inventario, caja, reportes, comprobantes, contabilidad y asistencia inteligente con SAVI.</p>
+      </div>
+      <div><h3>Navegacion</h3><p><a href="#funciones">Funciones</a><br><a href="#savi">SAVI</a><br><a href="#planes">Planes</a></p></div>
+      <div><h3>Contacto</h3><p>Demostraciones<br>Soporte SmartVentas<br>Negocios y bodegas</p></div>
+      <div><h3>Redes</h3><p><a href="https://www.facebook.com/profile.php?id=61591664199078" target="_blank" rel="noopener">Facebook SmartVentas</a><br>WhatsApp<br>Presentacion feria</p></div>
+    </div>
+  </footer>
+
+  <button class="floating-savi" id="floatingSavi" type="button" aria-label="Abrir chat de SAVI"><img src="public/img/smartventas-ai-robot.png" alt=""></button>
+  <aside class="floating-chat-panel" id="floatingChat" aria-label="Chat flotante de SAVI">
+    <div class="chat-head"><img src="public/img/smartventas-ai-robot.png" alt="SAVI"><div><strong>SAVI</strong><br><small>Asistente inteligente</small></div><button class="icon-btn" id="closeFloatingChat" type="button" aria-label="Minimizar chat">X</button></div>
+    <div class="float-chat-messages" id="floatMessages"></div>
+    <div class="chat-actions">
+      <button class="btn secondary" type="button" data-quick="ventas">Ventas</button>
+      <button class="btn secondary" type="button" data-quick="stock">Stock</button>
+      <button class="btn secondary" type="button" data-quick="demo">Demo</button>
+    </div>
+    <form class="float-chat-form" id="floatForm">
+      <input id="floatInput" type="text" aria-label="Mensaje para SAVI" placeholder="Escribe tu consulta...">
+      <button class="btn" type="submit">Enviar</button>
+    </form>
+  </aside>
+
+  <button class="icon-btn to-top" id="toTop" type="button" aria-label="Volver arriba">UP</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const root = document.documentElement;
+      const nav = document.getElementById("nav");
+      const progress = document.getElementById("progress");
+      const navLinks = document.getElementById("navLinks");
+      const menuBtn = document.getElementById("menuBtn");
+      const themeToggle = document.getElementById("themeToggle");
+      const toast = document.getElementById("toast");
+      const toTop = document.getElementById("toTop");
+      const cursorLight = document.getElementById("cursorLight");
+      const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+
+      const savedTheme = localStorage.getItem("sv-promo-theme");
+      if (savedTheme) root.dataset.theme = savedTheme;
+
+      function notify(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(notify.timer);
+        notify.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+      }
+
+      function updateScrollState() {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        const pct = max > 0 ? (scrollY / max) * 100 : 0;
+        progress.style.width = pct + "%";
+        nav.classList.toggle("scrolled", scrollY > 24);
+        toTop.classList.toggle("show", scrollY > 620);
+      }
+
+      addEventListener("scroll", updateScrollState, { passive: true });
+      updateScrollState();
+
+      menuBtn.addEventListener("click", () => navLinks.classList.toggle("open"));
+      navLinks.querySelectorAll("a").forEach(link => link.addEventListener("click", () => navLinks.classList.remove("open")));
+
+      const sectionLinks = Array.from(navLinks.querySelectorAll("a[href^='#']"));
+      const sectionObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          sectionLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === "#" + entry.target.id));
+        });
+      }, { rootMargin: "-42% 0px -52% 0px", threshold: .01 });
+      sectionLinks
+        .map(link => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean)
+        .forEach(section => sectionObserver.observe(section));
+
+      themeToggle.addEventListener("click", () => {
+        root.dataset.theme = root.dataset.theme === "light" ? "" : "light";
+        localStorage.setItem("sv-promo-theme", root.dataset.theme || "dark");
+        notify(root.dataset.theme === "light" ? "Modo claro activado" : "Modo oscuro activado");
+      });
+
+      toTop.addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
+
+      document.querySelectorAll("[data-plan]").forEach(btn => {
+        btn.addEventListener("click", () => notify("Plan " + btn.dataset.plan + " seleccionado para demostracion."));
+      });
+
+      document.querySelectorAll(".btn").forEach(btn => {
+        btn.addEventListener("click", event => {
+          if (motionQuery.matches) return;
+          const rect = btn.getBoundingClientRect();
+          const ripple = document.createElement("span");
+          ripple.className = "ripple";
+          ripple.style.left = event.clientX - rect.left + "px";
+          ripple.style.top = event.clientY - rect.top + "px";
+          btn.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 620);
+        });
+      });
+
+      const tiltCards = document.querySelectorAll(".module-card, .plan-card, .benefit-card, .result-item");
+      if (matchMedia("(pointer:fine)").matches && !motionQuery.matches) {
+        tiltCards.forEach(card => {
+          card.addEventListener("pointermove", event => {
+            const rect = card.getBoundingClientRect();
+            const px = (event.clientX - rect.left) / rect.width;
+            const py = (event.clientY - rect.top) / rect.height;
+            card.style.setProperty("--glow-x", (px * 100).toFixed(1) + "%");
+            card.style.setProperty("--glow-y", (py * 100).toFixed(1) + "%");
+            card.style.setProperty("--ry", ((px - .5) * 7).toFixed(2) + "deg");
+            card.style.setProperty("--rx", ((.5 - py) * 7).toFixed(2) + "deg");
+          }, { passive: true });
+          card.addEventListener("pointerleave", () => {
+            card.style.setProperty("--rx", "0deg");
+            card.style.setProperty("--ry", "0deg");
+            card.style.setProperty("--glow-x", "50%");
+            card.style.setProperty("--glow-y", "0%");
+          });
+        });
+      }
+
+      if (matchMedia("(pointer:fine)").matches) {
+        addEventListener("mousemove", event => {
+          cursorLight.style.left = event.clientX + "px";
+          cursorLight.style.top = event.clientY + "px";
+          const visual = document.getElementById("heroVisual");
+          if (visual) {
+            const x = (event.clientX / innerWidth - .5) * 12;
+            const y = (event.clientY / innerHeight - .5) * 12;
+            visual.style.transform = "translate3d(" + x + "px," + y + "px,0)";
+          }
+        }, { passive: true });
+      }
+
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: .16 });
+
+      document.querySelectorAll(".reveal").forEach((el, index) => {
+        el.style.setProperty("--reveal-delay", Math.min((index % 6) * 45, 225) + "ms");
+        revealObserver.observe(el);
+      });
+
+      const counterObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          const target = Number(el.dataset.counter || "0");
+          const prefix = el.dataset.prefix || "";
+          const start = performance.now();
+          function tick(now) {
+            const t = Math.min(1, (now - start) / 1000);
+            const value = target * (1 - Math.pow(1 - t, 3));
+            el.textContent = prefix ? prefix + value.toFixed(2) : Math.round(value).toString();
+            if (t < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          counterObserver.unobserve(el);
+        });
+      }, { threshold: .5 });
+
+      document.querySelectorAll("[data-counter]").forEach(el => counterObserver.observe(el));
+
+      const demoChat = document.getElementById("demoChat");
+      const chatSteps = [
+        ["user", "Cuanto vendimos hoy?"],
+        ["bot", "Las ventas de hoy alcanzaron S/ 825.60. El movimiento se mantiene activo frente al dia anterior."],
+        ["user", "Muestrame los productos con bajo stock."],
+        ["bot", "He encontrado 12 productos que necesitan reposicion. Deseas generar una lista de compra?"]
+      ];
+
+      function addMessage(container, role, text) {
+        const bubble = document.createElement("div");
+        bubble.className = "msg " + (role === "user" ? "user" : "bot");
+        bubble.textContent = text;
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      function addTyping(container) {
+        const typing = document.createElement("div");
+        typing.className = "typing";
+        typing.innerHTML = "<i></i><i></i><i></i>";
+        container.appendChild(typing);
+        container.scrollTop = container.scrollHeight;
+        return typing;
+      }
+
+      let chatPlayed = false;
+      const chatObserver = new IntersectionObserver(entries => {
+        if (chatPlayed || !entries[0].isIntersecting) return;
+        chatPlayed = true;
+        let delay = 350;
+        chatSteps.forEach(step => {
+          setTimeout(() => {
+            if (step[0] === "bot") {
+              const typing = addTyping(demoChat);
+              setTimeout(() => {
+                typing.remove();
+                addMessage(demoChat, step[0], step[1]);
+              }, 720);
+            } else {
+              addMessage(demoChat, step[0], step[1]);
+            }
+          }, delay);
+          delay += step[0] === "bot" ? 1500 : 900;
+        });
+      }, { threshold: .35 });
+      chatObserver.observe(demoChat);
+
+      document.querySelectorAll("[data-chat-action]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const label = btn.textContent.trim();
+          addMessage(demoChat, "user", label);
+          const typing = addTyping(demoChat);
+          setTimeout(() => {
+            typing.remove();
+            addMessage(demoChat, "bot", label === "Cancelar" ? "Operacion cancelada. No se realizo ningun cambio." : "Accion procesada dentro de la demostracion de SAVI.");
+            notify("SAVI actualizo la demostracion sin salir de la pagina.");
+          }, 700);
+        });
+      });
+
+      const floatingChat = document.getElementById("floatingChat");
+      const floatingSavi = document.getElementById("floatingSavi");
+      const closeFloatingChat = document.getElementById("closeFloatingChat");
+      const floatMessages = document.getElementById("floatMessages");
+      const floatForm = document.getElementById("floatForm");
+      const floatInput = document.getElementById("floatInput");
+
+      function openFloatingChat() {
+        floatingChat.classList.add("open");
+        if (!floatMessages.dataset.ready) {
+          addMessage(floatMessages, "bot", "Hola, soy SAVI. Puedo mostrarte ventas, stock, planes o una demostracion.");
+          floatMessages.dataset.ready = "1";
+        }
+        setTimeout(() => floatInput.focus(), 120);
+      }
+
+      floatingSavi.addEventListener("click", openFloatingChat);
+      closeFloatingChat.addEventListener("click", () => floatingChat.classList.remove("open"));
+
+      document.querySelectorAll("[data-quick]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          openFloatingChat();
+          addMessage(floatMessages, "user", btn.textContent.trim());
+          addMessage(floatMessages, "bot", "Listo. En SmartVentas esa informacion se obtiene desde los modulos conectados del sistema.");
+        });
+      });
+
+      floatForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const text = floatInput.value.trim();
+        if (!text) return;
+        addMessage(floatMessages, "user", text);
+        floatInput.value = "";
+        const typing = addTyping(floatMessages);
+        setTimeout(() => {
+          typing.remove();
+          addMessage(floatMessages, "bot", "Esta pagina muestra una demo promocional. En el sistema real, SAVI consulta los datos de SmartVentas y solicita confirmacion antes de ejecutar acciones.");
+        }, 650);
+      });
+
+      const canvas = document.getElementById("particles");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      const reduced = motionQuery.matches;
+
+      function resizeCanvas() {
+        canvas.width = Math.floor(innerWidth * devicePixelRatio);
+        canvas.height = Math.floor(innerHeight * devicePixelRatio);
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        const count = innerWidth < 700 ? 32 : 68;
+        particles = Array.from({ length: count }, () => ({
+          x: Math.random() * innerWidth,
+          y: Math.random() * innerHeight,
+          vx: (Math.random() - .5) * .22,
+          vy: (Math.random() - .5) * .22,
+          r: Math.random() * 1.7 + .7
+        }));
+      }
+
+      function drawParticles() {
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        ctx.fillStyle = "rgba(36,216,255,.55)";
+        particles.forEach((p, i) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > innerWidth) p.vx *= -1;
+          if (p.y < 0 || p.y > innerHeight) p.vy *= -1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+          for (let j = i + 1; j < particles.length; j++) {
+            const q = particles[j];
+            const dx = p.x - q.x;
+            const dy = p.y - q.y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 120) {
+              ctx.strokeStyle = "rgba(36,216,255," + (1 - d / 120) * .16 + ")";
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(q.x, q.y);
+              ctx.stroke();
+            }
+          }
+        });
+        if (!reduced) requestAnimationFrame(drawParticles);
+      }
+
+      resizeCanvas();
+      addEventListener("resize", resizeCanvas);
+      if (!reduced) drawParticles();
+    })();
+  </script>
+</body>
+</html>
